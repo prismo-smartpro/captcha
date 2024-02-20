@@ -15,7 +15,7 @@ class Captcha
         $image = imagecreatefrompng(self::BACKGROUND);
         $textColor = imagecolorallocate($image, 255, 255, 255);
         $x = 16;
-        $y = 26;
+        $y = 28;
         $fontSize = 18;
         imagettftext($image, $fontSize, 0, $x, $y, $textColor, self::FONT_PATH, $text);
         imagepng($image);
