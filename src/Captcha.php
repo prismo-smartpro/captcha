@@ -4,17 +4,27 @@ namespace SmartPRO\Technology;
 
 use Exception;
 
+/**
+ *
+ */
 class Captcha
 {
     const FONT_PATH = __DIR__ . "/assets/fonts/Roboto-BoldItalic.ttf";
     const BACKGROUND = __DIR__ . "/assets/images/background.png";
 
+    /**
+     * @param $text
+     * @return string
+     */
     private static function Create($text): string
     {
         ob_start();
         $image = imagecreatefrompng(self::BACKGROUND);
+        $box = imagettfbbox(18, 0, self::FONT_PATH, $text);
+        $width = $box[2] - $box[0];
+        $position = (int)((120 - $width) / 2);
         $textColor = imagecolorallocate($image, 255, 255, 255);
-        $x = 16;
+        $x = $position;
         $y = 28;
         $fontSize = 18;
         imagettftext($image, $fontSize, 0, $x, $y, $textColor, self::FONT_PATH, $text);
@@ -22,7 +32,7 @@ class Captcha
         imagedestroy($image);
         $image_data = ob_get_contents();
         ob_end_clean();
-        return 'data:image/png;base64,' . base64_encode($image_data);
+        return "data:image/png;base64," . base64_encode($image_data);
     }
 
     /**
@@ -46,17 +56,23 @@ class Captcha
         return true;
     }
 
+    /**
+     * @return string
+     */
     private static function generateCaptchaString(): string
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $characters = "0123456789abcdefghijklmnopqrstuvwxyz";
         $charactersLength = strlen($characters);
-        $captchaString = '';
+        $captchaString = "";
         for ($i = 0; $i < 6; $i++) {
             $captchaString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $captchaString;
     }
 
+    /**
+     * @return string
+     */
     public static function Render(): string
     {
         $captcha = self::generateCaptchaString();
