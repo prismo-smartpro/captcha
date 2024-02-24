@@ -25,7 +25,7 @@ class Captcha
         $position = (int)((120 - $width) / 2);
         $textColor = imagecolorallocate($image, 255, 255, 255);
         $x = $position;
-        $y = 28;
+        $y = 27;
         $fontSize = 18;
         imagettftext($image, $fontSize, 0, $x, $y, $textColor, self::FONT_PATH, $text);
         imagepng($image);
@@ -61,10 +61,11 @@ class Captcha
      */
     private static function generateCaptchaString(): string
     {
+        $rand = mt_rand(4, 6);
         $characters = "0123456789abcdefghijklmnopqrstuvwxyz";
         $charactersLength = strlen($characters);
         $captchaString = "";
-        for ($i = 0; $i < 6; $i++) {
+        for ($i = 0; $i < $rand; $i++) {
             $captchaString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $captchaString;
@@ -75,9 +76,12 @@ class Captcha
      */
     public static function Render(): string
     {
-        $captcha = self::generateCaptchaString();
+        do {
+            $captcha = self::generateCaptchaString();
+        } while (is_numeric($captcha));
+
         $_SESSION["server_captcha"] = $captcha;
         $image = self::Create($captcha);
-        return "<img src='{$image}' alt='Captcha'>";
+        return "<img class='captcha-image-stm' src='{$image}' alt='Captcha'>";
     }
 }
